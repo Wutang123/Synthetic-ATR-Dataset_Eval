@@ -39,19 +39,19 @@ def main():
         # Take in hyperparameters
 
     print(">>>>> Starting Program")
-    classifier_data = "Input/Train_Classifier_Dataset"
+    classifier_csv = "Input/Train_Classifier_Dataset.csv"
 
     # Processing Step
-    process_classifier_data(classifier_data)
-    process_encoder_decoder_data()
+    df_train, df_test = process_classifier_data(classifier_csv)
+    # process_encoder_decoder_data()
 
     # Training Step
-    train_classifier()
-    train_encoder_decoder()
+    train_classifier(df_train, df_test)
+    # train_encoder_decoder()
 
     # Evaluation Step
-    test_classifier()
-    test_encoder_decoder()
+    # test_classifier()
+    # test_encoder_decoder()
 
 # MODULES:
 if __name__ == "__main__":

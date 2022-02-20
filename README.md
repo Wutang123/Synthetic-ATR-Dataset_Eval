@@ -2,10 +2,10 @@
 Evaluate encoder-decoder network using ATR dataset
 
 # Task:
-1.) Classify ground truth images (Print out classiification)
-2.) Create synthetic images using different orientation (Print out image), then classify synthetic image (Print out classification)
-3.) Find exact ground truth of different orientation, then classifiy ground truth of different orientation (Print out classifcation)
-4.) Evaluate:
+1. Classify ground truth images (Print out classiification)
+2. Create synthetic images using different orientation (Print out image), then classify synthetic image (Print out classification)
+3. Find exact ground truth of different orientation, then classifiy ground truth of different orientation (Print out classifcation)
+4. Evaluate:
     - How well the synthetic images are compared to the ground truth
     - Accuracy of classifcations
 
@@ -21,16 +21,11 @@ Evaluate encoder-decoder network using ATR dataset
     - 2S3    (#13)
     - D20    (#14)
     NOTE: T62 (#10) or human class will not be use.
-
-- 2 Sensor:
-    - Visible (ilco)
+- 1 Sensor:
     - MWIR    (cegr)
-
 - 5 degree offset
-
-- 3 Ranges
+- 2 Ranges
     - 1000m (Day: 2003/Night: 1923)
-    - 1500m (Day: 2005/Night: 1925)
     - 2000m (Day: 2007/Night: 1927)
 
 # Image Comparison Method:
@@ -63,3 +58,9 @@ Evaluate encoder-decoder network using ATR dataset
     - Description: This file.
 - .gitignore
     - Description: Ignore specific files
+
+# Libraries:
+- pandas
+- sklearn
+- torchsummary
+- pytorch

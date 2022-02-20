@@ -1,5 +1,8 @@
 #Folders
 Maliha_Code/
+INPUT/Train_Classifier_Dataset/*
+INPUT/Train_Encoder_Decoder_Dataset/*
+*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
