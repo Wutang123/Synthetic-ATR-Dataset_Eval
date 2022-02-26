@@ -6,30 +6,27 @@
 # Professor:     Professor Abhijit Mahalanobis
 # Name:          Justin Wu
 # Project:       ATR Dataset Evaluator
-# Function:      images2csv.py
-# Create:        01/17/22
+# Function:      train_classifier_images2csv.py
+# Create:        02/25/22
 # Description:   Read directory of images and convert to csv format
+#                Used for training classifier
 #---------------------------------------------------------------------
 
 # IMPORTS:
 import os
 import csv
-import re
 
 # FUNCTIONS:
 #---------------------------------------------------------------------
-# Function:    main()
+# Function:    train_classifier_images2csv()
 # Description: Read directory of images and convert to csv format
 #---------------------------------------------------------------------
-def main():
-    input_path = "INPUT"
-    dir_path = os.path.join(input_path, "Train_Classifier_Dataset")
+def train_classifier_images2csv(input_path, dir_path):
+
     csv_path = os.path.join(input_path, "Train_Classifier_Dataset.csv")
+    print("Ouput CSV Path:     ", csv_path)
 
-    print("Input Dataset Path: ", dir_path)
-    print("Ouput CSV Path: ", csv_path)
-
-    header = ['image', 'class_id', 'class_type', 'Time_of_Day', 'Range', 'Orientation']
+    header = ['image', 'class_id', 'class_type', 'time_of_day', 'range', 'orientation']
     data = []
 
     with open(csv_path, 'w', encoding='UTF8', newline='') as csv_file:
@@ -39,15 +36,17 @@ def main():
 
         for sub_dir_name in os.listdir(dir_path):
             sub_dir_path = os.path.join(dir_path, sub_dir_name)
+            print(sub_dir_path)
 
             for file_name in os.listdir(sub_dir_path):
                 file_path = os.path.join(sub_dir_path, file_name)
 
                 # Check if file
-                if os.path.isfile(file_path):
+                if os.path.isfile(file_path) and (not file_path.endswith('.ini')):
+                    # print(file_path)
                     substring = file_name.split('_')
 
-                    if (len(substring) == 4):
+                    if(int(substring[2]) > 900):
                         data.append(file_path)                       # Data[0]
                         data.append(substring[1])                    # Data[1]
                         data.append(substring[3].replace(".mat","")) # Data[2]
@@ -66,11 +65,8 @@ def main():
                         data.append(substring[2])                    # Data[5]
 
                         # print(data, "\n")
+
                         # Write Data
                         writer.writerow(data)
                         data.clear()
-
-# MODULES:
-if __name__ == "__main__":
-    main()
 #=====================================================================

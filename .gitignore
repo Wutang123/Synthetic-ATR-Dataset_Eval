@@ -1,8 +1,19 @@
 #Folders
 Maliha_Code/
-INPUT/Train_Classifier_Dataset/*
-INPUT/Train_Encoder_Decoder_Dataset/*
+INPUT/Dataset/*
+Archive/*
+OUTPUT/train_classifier/*
+OUTPUT/test_classifier/*
+OUTPUT/train_encoder_decoder/*
+OUTPUT/test_encoder_decoder/*
+
+# Programs
+foo.py
+
+# Files
+*.pth
 *.csv
+*.xlsx
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
