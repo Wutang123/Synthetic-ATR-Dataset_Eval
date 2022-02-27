@@ -15,16 +15,18 @@
 import os
 import sys
 import time
-from tkinter import Variable
+from contextlib import redirect_stdout
+import matplotlib.pyplot as plt
 import numpy as np
 import cv2
+import csv
 import scipy.io # Open .mat files
 
 # pytorch libraries
 import torch
 from torch import optim, nn
 from torch.utils.data import DataLoader, Dataset
-from torchvision import models, transforms
+from torchvision import models
 from torchsummary import summary
 
 # Class:
@@ -62,7 +64,7 @@ class Dataset(Dataset):
 # Function:    train()
 # Description: Train model
 #---------------------------------------------------------------------
-def train(train_loader, model, loss_function, optimizer, device):
+def train(file, train_loader, model, loss_function, optimizer, device):
     model.train()
 
     size = len(train_loader.dataset)
@@ -96,32 +98,118 @@ def train(train_loader, model, loss_function, optimizer, device):
     train_loss /= num_batches
     train_accuracy /= size
     print(f"Training Error: [Accuracy: {(100 * train_accuracy):>0.1f}%, Avg loss: {train_loss:>8f}]")
+    file.write("Training Error: [Accuracy: {:>0.5f}%, Avg Loss: {:>8f}]\n".format((100 * train_accuracy), train_loss))
 
     return train_loss, train_accuracy
 
 
 
 #---------------------------------------------------------------------
+# Function:    calcResults()
+# Description: Print and write all results
+#---------------------------------------------------------------------
+def calcResults(file, save_data, run_path, total_train_loss, total_train_accuracy, total_time_list):
+
+    # Print Data
+    print("Training Loss:       ", total_train_loss)
+    file.write("Training Loss:       " + str(total_train_loss) + "\n")
+    print("Training Accuracy:   ", total_train_accuracy)
+    file.write("Training Accuracy:   " + str(total_train_accuracy) + "\n")
+    print("Total Time (sec):    ", total_time_list)
+    file.write("Total Time (sec):    " + str(total_time_list) + "\n\n")
+    print()
+
+    print("Best Training Accuracy: ", max(total_train_accuracy), " at Epoch: ", total_train_accuracy.index(max(total_train_accuracy)))
+    file.write("Best Training Accuracy: " + str(max(total_train_accuracy)) + " at Epoch: " + str(total_train_accuracy.index(max(total_train_accuracy))) + "\n\n")
+    print()
+
+    print("Average Training Loss:       {}".format(np.mean(total_train_loss)))
+    file.write("Average Training Loss:       {} \n".format(np.mean(total_train_loss)))
+    print("Average Training Accuracy:   {}".format(np.mean(total_train_accuracy)))
+    file.write("Average Training Accuracy:   {} \n".format(np.mean(total_train_accuracy)))
+    print("Average Total Time (sec):    {}".format(np.mean(total_time_list)))
+    file.write("Average Total Time (sec):    {} \n\n".format(np.mean(total_time_list)))
+    print()
+
+    if(save_data):
+        # Open csv file in 'w' mode
+        with open(os.path.join(run_path, "train_classifier_data.csv"), 'w', newline ='') as csv_file:
+            length = len(total_train_loss)
+
+            write = csv.writer(csv_file)
+            write.writerow(["total_train_loss", "total_train_accuracy", "total_time_list"])
+            for i in range(length):
+                write.writerow([total_train_loss[i], total_train_accuracy[i], total_time_list[i]])
+
+
+
+#---------------------------------------------------------------------
+# Function:    plotFigures()
+# Description: Plot comparsion plots
+#---------------------------------------------------------------------
+def plotFigures(save_fig, run_path, total_train_loss, total_train_accuracy):
+
+    fig = plt.figure()
+    plt.plot(total_train_loss, label = 'Training Loss')
+    plt.plot(total_train_accuracy, label = 'Training Accuracy')
+    plt.legend()
+    if (save_fig):
+        save_path = os.path.join(run_path, "Training_Loss_vs_Training_Accuracy.png")
+        fig.savefig(save_path, bbox_inches = 'tight')
+
+    fig = plt.figure()
+    plt.plot(total_train_loss, label = 'Training Loss')
+    plt.legend()
+    if (save_fig):
+        save_path = os.path.join(run_path, "Training_Loss.png")
+        fig.savefig(save_path, bbox_inches = 'tight')
+
+    fig = plt.figure()
+    plt.plot(total_train_accuracy, label = 'Training Accuracy')
+    plt.legend()
+    if (save_fig):
+        save_path = os.path.join(run_path, "Training_Accuracy.png")
+        fig.savefig(save_path, bbox_inches = 'tight')
+
+#---------------------------------------------------------------------
 # Function:    train_classifier()
 # Description: Train Classifier
 #---------------------------------------------------------------------
-def train_classifier(run_path, df_train_classifier):
+def train_classifier(args, file, run_path, number_classes, df_train_classifier):
 
-    # TODO: Update Hyperparameters Later
-    learning_rate = 0.0001
-    batch =  64
-    num_worker = 4
-    epoch_num = 3
-    input_size = (80,40) # Minimum for VGG16 is (32,32)
-    norm_mean = (0.49139968, 0.48215827, 0.44653124)
-    norm_std = (0.24703233, 0.24348505, 0.26158768)
-    num_classes = 9
+    learning_rate = args.lr
+    batch         = args.batch
+    num_worker    = args.worker
+    epoch_num     = args.epoch
+    input_size    = args.imgsz # Minimum for VGG16 is (32,32)
+    # norm_mean   = (0.49139968, 0.48215827, 0.44653124)
+    # norm_std    = (0.24703233, 0.24348505, 0.26158768)
+    num_classes   = number_classes
+    save_model    = args.save_model
+    save_fig      = args.save_fig
+    save_data     = args.save_data
+
+    print("Learning Rate:      {}".format(learning_rate))
+    file.write("Learing Rate:       {} \n".format(learning_rate))
+    print("Batch Size:         {}".format(batch))
+    file.write("Batch Size:         {} \n".format(batch))
+    print("Number of Workers:  {}".format(num_worker))
+    file.write("Number of Workers:  {} \n".format(num_worker))
+    print("Epoch Number:       {}".format(epoch_num))
+    file.write("Epoch Number:       {} \n".format(epoch_num))
+    print("Image Size:         {}".format(input_size))
+    file.write("Image Size:         {} \n".format(input_size))
+    # print("Normalized Mean:   ", norm_mean)
+    # file.write("Normalized Mean:    " + str(norm_mean) + "\n")
+    # print("Normalized STD:    ", norm_std)
+    # file.write("Normalized STD:     " + str(norm_std) + "\n")
 
     # Define the device (use GPU if avaliable)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Device Used:       ", device)
+    print("Device Used:       ", device, "\n")
+    file.write("Device Used:        " + str(device) + "\n")
 
-    # Model
+    # Model - VGG16
     model = models.vgg16(pretrained = False)
 
     # Update number of input channels from 3 to 1
@@ -164,11 +252,17 @@ def train_classifier(run_path, df_train_classifier):
         else:
             if(images.shape != train_size):
                 print("ERROR: Mismatch train_loader Size!")
+                file.write("ERROR: Mismatch train_loader Size!\n")
                 sys.exit()
 
     # Summary of Model
-    print("Tensor Image Size [batch_size, channels, image_height, image_width]: ", train_size)
+    print("Tensor Image Size [batch_size, channels, image_height, image_width]: ", train_size, "\n")
+    file.write("\nTensor Image Size [batch_size, channel_size, image_height, image_width]: " + str(train_size) + "\n\n")
     summary(model, input_size = (train_size[1], train_size[2], train_size[3]))
+    print()
+    with redirect_stdout(file):
+        summary(model, input_size = (train_size[1], train_size[2], train_size[3]))
+    file.write("\n")
 
     # Main Training Function
     total_train_loss     = []
@@ -176,27 +270,31 @@ def train_classifier(run_path, df_train_classifier):
     total_time_list      = []
 
     for epoch in range(epoch_num):
-        print("EPOCH {}:".format(epoch))
         start_time = time.time()
-        train_loss, train_accuracy = train(train_loader, model, loss_function, optimizer, device)
-        total_train_loss.append(train_loss) # Average Training Loss
+
+        print("*" * 10)
+        file.write("*" * 10 +"\n")
+        print("EPOCH {}:".format(epoch))
+        file.write("EPOCH: " + str(epoch) + "\n")
+
+        train_loss, train_accuracy = train(file, train_loader, model, loss_function, optimizer, device)
+        total_train_loss.append(train_loss)         # Average Training Loss
         total_train_accuracy.append(train_accuracy) # Average Training Accuracy
+
         end_time = time.time()
         total_time_difference = end_time - start_time
         total_time_list.append(total_time_difference)
 
-    print("Training Loss:       ", total_train_loss)
-    print("Training Accuracy:   ", total_train_accuracy)
-    print("Total Time (sec):    ", total_time_list)
-    print("Best Training Accuracy: ", max(total_train_accuracy), " at Epoch: ", total_train_accuracy.index(max(total_train_accuracy)))
-    print("Average Training Loss:       {}".format(np.mean(total_train_loss)))
-    print("Average Training Accuracy:   {}".format(np.mean(total_train_accuracy)))
-    print("Average Total Time (sec):    {}".format(np.mean(total_time_list)))
+    print("*" * 10 + "\n")
+    file.write("*" * 10 +"\n\n")
 
     # Save Model
-    save_path = os.path.join(run_path, "classifier.pth")
-    torch.save(model.state_dict(), save_path)
+    if(save_model):
+        save_path = os.path.join(run_path, "classifier.pth")
+        torch.save(model.state_dict(), save_path)
 
-    return save_path
+    # Organize Results
+    calcResults(file, save_data, run_path, total_train_loss, total_train_accuracy, total_time_list)
+    plotFigures(save_fig, run_path, total_train_loss, total_train_accuracy)
 
 #=====================================================================

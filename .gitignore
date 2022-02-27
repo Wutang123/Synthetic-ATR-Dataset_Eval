@@ -8,7 +8,7 @@ OUTPUT/train_encoder_decoder/*
 OUTPUT/test_encoder_decoder/*
 
 # Programs
-foo.py
+
 
 # Files
 *.pth

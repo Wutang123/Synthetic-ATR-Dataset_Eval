@@ -6,10 +6,10 @@ Evaluate encoder-decoder network using ATR dataset
     - py .\images2csv.py --train_classifier True --test_classifier True --train_encoder_decoder True --test_encoder_decoder True
 
 - Train Classifier:
-    -
+    - py .\train_classifier.py
 
 - Test Classifier:
-    -
+    - py .\test_classifier.py
 
 - Train Encoder Decoder:
     -

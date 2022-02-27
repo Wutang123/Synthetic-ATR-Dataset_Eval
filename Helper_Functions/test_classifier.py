@@ -14,9 +14,13 @@
 # IMPORTS:
 import os
 import matplotlib.pyplot as plt
+from numpy import save
 import seaborn as sns
 import scipy.io # Open .mat files
 import cv2
+import csv
+import pandas as pd
+import json
 
 # pytorch libraries
 import torch
@@ -59,21 +63,78 @@ class Dataset(Dataset):
 
 # FUNCTIONS:
 #---------------------------------------------------------------------
+# Function:    plot_confusion_matrix()
+# Description: Plot confusion matrix
+#---------------------------------------------------------------------
+def plot_confusion_matrix(file, target_names, save_fig, run_path, y_label, y_pred):
+
+    conf_mat = confusion_matrix(y_label, y_pred)
+    print("Confusion Matrix: \n", conf_mat, "\n")
+    file.write("Confusion Matrix: \n" + str(conf_mat) + "\n\n")
+
+    fig = plt.figure(figsize=(10, 10))
+    plt.title('Confusion matrix')
+    ax = sns.heatmap(conf_mat, annot = True, cmap = plt.cm.Blues, fmt = 'g', linewidths = 1)
+    ax.set_xticklabels(target_names)
+    ax.set_yticklabels(target_names)
+    ax.set(ylabel = "True Labels", xlabel = "Predicted Labels")
+
+    # Drawing the frame
+    for _, spine in ax.spines.items():
+        spine.set_visible(True)
+        spine.set_linewidth(1)
+
+    if(save_fig):
+        save_path = os.path.join(run_path, "Confusion_Matrix.png")
+        fig.savefig(save_path, bbox_inches = 'tight')
+
+    # Per-class accuracy
+    class_accuracy = 100 * conf_mat.diagonal()/conf_mat.sum(1)
+    for i in range(len(target_names)):
+        print(target_names[i], ": ", round(class_accuracy[i],2), "%")
+        file.write(target_names[i] + ":" + str(round(class_accuracy[i],2)) + "% \n")
+    print()
+    file.write("\n")
+
+#---------------------------------------------------------------------
 # Function:    test_classifier()
 # Description: Evaluate Classifier
 #---------------------------------------------------------------------
-def test_classifier(run_path, trained_classifier_path, df_test_classifier):
-    # TODO: Update Hyperparameters Later
-    batch =  64
-    num_worker = 4
-    input_size = (80,40) # Minimum for VGG16 is (32,32)
-    num_classes = 9
+def test_classifier(args, file, run_path, number_classes, test_csv_file, model_path, df_test_classifier):
+    batch       = args.batch
+    num_worker  = args.worker
+    input_size  = args.imgsz # Minimum for VGG16 is (32,32)
+    num_classes = number_classes
+    save_fig    = args.save_fig
+    save_data   = args.save_data
+
+    print("Batch Size:         {}".format(batch))
+    file.write("Batch Size:         {} \n".format(batch))
+    print("Number of Workers:  {}".format(num_worker))
+    file.write("Number of Workers:  {} \n".format(num_worker))
+    print("Image Size:         {}".format(input_size))
+    file.write("Image Size:         {} \n".format(input_size))
 
     # Define the device (use GPU if avaliable)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Device Used:       ", device, "\n")
+    file.write("Device Used:        " + str(device) + "\n\n")
 
-    # Model
+    class_id_dict = {
+                     1 : 'PICKUP',
+                     2 : 'SUV'   ,
+                     5 : 'BTR70' ,
+                     6 : 'BRDM2' ,
+                     9 : 'BMP2'  ,
+                     11: 'T72'   ,
+                     12: 'ZSU23' ,
+                     13: '2S3'   ,
+                     14: 'D20'   }
+    file.write("class_id_dict: \n")
+    file.write(json.dumps(class_id_dict))
+    file.write("\n\n")
+
+    # Model - VGG16
     model = models.vgg16(pretrained = False)
 
     # Update number of input channels from 3 to 1
@@ -85,13 +146,12 @@ def test_classifier(run_path, trained_classifier_path, df_test_classifier):
     num_ftrs = model.classifier[6].in_features
     model.fc = nn.Linear(num_ftrs, num_classes)
 
+    # Load Trained Model
+    model.load_state_dict(torch.load(model_path))
     model = model.to(device) # Add device to model
 
-    # Load Model
-    model.load_state_dict(torch.load(trained_classifier_path))
-
     test_set    = Dataset(df_test_classifier, input_size)
-    test_loader = DataLoader(test_set, batch_size = batch, shuffle = False, num_workers = num_worker, drop_last = True)
+    test_loader = DataLoader(test_set, batch_size = batch, shuffle = False, num_workers = num_worker, drop_last = False)
 
     # Test Model
     model.eval()
@@ -114,33 +174,26 @@ def test_classifier(run_path, trained_classifier_path, df_test_classifier):
     y_label = y_label.numpy()
     y_pred = y_pred.numpy()
 
+    if(save_data):
+        df_test_csv = pd.read_csv(test_csv_file)
+        test_image = df_test_csv['image']
+
+        # Open csv file in 'w' mode
+        with open(os.path.join(run_path, "test_classifier_data.csv"), 'w', newline ='') as csv_file:
+            length = len(y_label)
+
+            write = csv.writer(csv_file)
+            write.writerow(["image", "ground_truth", "predict"])
+            for i in range(length):
+                write.writerow([test_image[i], class_id_dict[y_label[i]], class_id_dict[y_pred[i]]])
+
     target_names = ['PICKUP','SUV','BTR70','BRDM2','BMP2','T72','ZSU23', '2S3', 'D20']
 
     # Accuracy Score
     acc_score = accuracy_score(y_label, y_pred)
-    print(acc_score)
+    print("Model Accuracy: ", acc_score, "\n")
+    file.write("Model Accuracy: " + str(acc_score) + "\n\n")
 
-    # Confusion Matrix
-    conf_mat = confusion_matrix(y_label, y_pred)
-    print("Confusion Matrix: \n", conf_mat, "\n")
-
-    fig = plt.figure()
-    plt.title('Confusion matrix')
-    ax = sns.heatmap(conf_mat, annot = True, cmap = plt.cm.Blues, fmt = 'g', linewidths = 1)
-    ax.set_xticklabels(target_names)
-    ax.set_yticklabels(target_names)
-    ax.set(ylabel = "True Labels", xlabel = "Predicted Labels")
-
-    # Drawing the frame
-    for _, spine in ax.spines.items():
-        spine.set_visible(True)
-        spine.set_linewidth(1)
-
-    save_path = os.path.join(run_path, "Confusion_Matrix.png")
-
-    # Per-class accuracy
-    class_accuracy = 100 * conf_mat.diagonal()/conf_mat.sum(1)
-    for i in range(len(target_names)):
-        print(target_names[i], ": ", round(class_accuracy[i],2), "%")
+    plot_confusion_matrix(file, target_names, save_fig, run_path, y_label, y_pred)
 
 #=====================================================================
