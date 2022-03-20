@@ -39,7 +39,7 @@ def main():
     parser.add_argument('--save_data' , type = bool , default = True                                       , help = 'Save Data to CSV')
     parser.add_argument('--csv'       , type = str  , default = 'Input/Train_Encoder_Decoder_Dataset.csv'  , help = 'Load csv files')
     parser.add_argument('--lr'        , type = float, default = 1e-4                                       , help = 'Select Learning Rate (e.g. 1e-4)')
-    parser.add_argument('--epoch'     , type = int  , default = 10                                         , help = 'Select Epoch Size (e.g 25)')
+    parser.add_argument('--epoch'     , type = int  , default = 100                                         , help = 'Select Epoch Size (e.g 25)')
     parser.add_argument('--batch'     , type = int  , default = 64                                         , help = 'Select Batch Size (e.g 64)')
     parser.add_argument('--worker'    , type = int  , default = 2                                          , help = 'Select Number of Workers (e.g 4)')
     parser.add_argument('--imgsz'     , type = int  , default = (64,64)                                    , help = 'Select Input Image Size (e.g 64,64)')

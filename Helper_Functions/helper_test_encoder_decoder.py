@@ -75,8 +75,8 @@ def plot_confusion_matrix(file, target_names, save_fig, run_path, y_label, y_pre
 #---------------------------------------------------------------------
 def helper_test_encoder_decoder(args, file, run_path, number_classes, test_csv_file, vgg_model_path, ec_model_path, df_test_encoder_decoder):
 
-    pred_images_path = os.path.join(run_path, "pred_images")
-    os.mkdir(pred_images_path)
+    # pred_images_path = os.path.join(run_path, "pred_images")
+    # os.mkdir(pred_images_path)
 
     batch         = args.batch
     num_worker    = args.worker
