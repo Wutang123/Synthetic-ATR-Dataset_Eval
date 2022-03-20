@@ -45,60 +45,37 @@ Evaluate encoder-decoder network using ATR dataset
     - 2000m (Day: 2007/Night: 1927)
 
 # Folder Structure
-- Helper_Functions:
-    - az_dict.txt
-        - Description: dict of azimuth to degrees translations
-    - dataset.py
-        - Description: Class used to organize dataset for models
-    - helper_test_classifier.py
-        - Description: Helper function for test_classifier.py
-    - helper_test_encoder_decoder.py
-        - Description: Helper function for test_encoder_decoder.py
-    - helper_train_classifier.py
-        - Description: Helper function for train_classifier.py
-    - helper_train_encoder_decoder.py
-        - Description: Helper function for train_encoder_decoder.py
-    - models.py
-        - Description: Class to create encoder decoder model
-    - sample_image.py
-        - Description: Test function to sample a few images (TESTING PURPOSES)
-    - test_classifier_images2csv.py
-        - Description: Helper functipm to convert dataset to csv used during classifier testing
-    - test_encoder_decoder_images2csv.py
-        - Description: Helper functipm to convert dataset to csv used during encoder decoder testing
-    - train_classifier_images2csv.py
-        - Description: Helper functipm to convert dataset to csv used during classifier training
-    - train_encoder_decoder_images2csv.py
-        - Description: Helper functipm to convert dataset to csv used during encoder decoder training
-- images2csv.py
-    - Description: Convert dataset to csv used during training and testing
-- test_classifier.py
-    - Description: Main function to evaluate classifer performance
-- test_encoder_decoder.py
-    - Description: Main function to evaluate encoder decoder performance
-- train_classifier.py
-    - Description: Main function to train classifier
-- train_enoder_decoder.py
-    - Description: Main function to train encoder decoder
-- INPUT
-    - Dataset
-        - Description: This is where you leave you images
-    - Test_Classifier_Dataset.csv
-        - Description: CSV file created to use during classifier testing
-    - Test_Encoder_Decoder_Dataset.csv
-        - Description: CSV file created to use during encoder decoder testing
-    - Train_Classifier_Dataset.csv
-        - Description: CSV file created to use during classifier training
-    - Train_Encoder_Decoder_Dataset.csv
-        - Description: CSV file created to use during encoder decoder training
-- OUTPUT
-    - Description: Contains output of each run
-- main.py
-    - Description: Main function that controls training or evaluation
-- README.md
-    - Description: This file.
-- .gitignore
-    - Description: Ignore specific files
+- Helper_Functions: Folder containing helper functions
+    - az_dict.txt: Dict of azimuth to degrees translations
+    - dataset.py: Class used to organize dataset for models
+    - helper_test_classifier.py: Helper function for test_classifier.py
+    - helper_test_encoder_decoder.py: Helper function for test_encoder_decoder.py
+    - helper_train_classifier.py: Helper function for train_classifier.py
+    - helper_train_encoder_decoder.py: Helper function for train_encoder_decoder.py
+    - models.py: Class to create encoder decoder model
+    - sample_image.py: Test function to sample a few images (TESTING PURPOSES)
+    - test_classifier_images2csv.py: Helper functipm to convert dataset to csv used during classifier testing
+    - test_encoder_decoder_images2csv.py: Helper functipm to convert dataset to csv used during encoder decoder testing
+    - train_classifier_images2csv.py: Helper functipm to convert dataset to csv used during classifier training
+    - train_encoder_decoder_images2csv.py: Helper functipm to convert dataset to csv used during encoder decoder training
+- INPUT: Folder containing input csv or input images
+    - Dataset: Folder containing dataset (Create folder and input images here) (To larger to push onto github repo)
+        - cegr1923: Images at night at 1000m
+        - cegr1927: Images at day at 1000m
+        - cegr2003: Images at night at 2000m
+        - cegr2007: Images at day at 2000m
+    - Test_Classifier_Dataset.csv: CSV file created to use during classifier testing
+    - Test_Encoder_Decoder_Dataset.csv: CSV file created to use during encoder decoder testing
+    - Train_Classifier_Dataset.csv: CSV file created to use during classifier training
+    - Train_Encoder_Decoder_Dataset.csv: CSV file created to use during encoder decoder training
+- OUTPUT: Folder contains output of each run
+- README.md: Readme file
+- .gitignore: Ignore specific files
+- images2csv.py: Convert dataset to csv used during training and testing
+- test_classifier.py: Main function to evaluate classifer performance
+- test_encoder_decoder.py: Main function to evaluate encoder decoder performance
+- train_classifier.py: Main function to train classifier
+- train_enoder_decoder.py: Main function to train encoder decoder
 
 # Libraries:
 - pandas
