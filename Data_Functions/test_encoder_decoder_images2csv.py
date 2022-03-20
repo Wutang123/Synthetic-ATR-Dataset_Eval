@@ -18,10 +18,10 @@ import csv
 
 # FUNCTIONS:
 #---------------------------------------------------------------------
-# Function:    train_encoder_decoder_images2csv()
+# Function:    test_encoder_decoder_images2csv()
 # Description: Read directory of images and convert to csv format
 #---------------------------------------------------------------------
-def train_encoder_decoder_images2csv(input_path, dir_path):
+def test_encoder_decoder_images2csv(input_path, dir_path):
 
     csv_path = os.path.join(input_path, "Test_Encoder_Decoder_Dataset.csv")
     print("Ouput CSV Path:     ", csv_path)

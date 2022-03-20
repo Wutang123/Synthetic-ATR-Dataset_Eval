@@ -16,13 +16,11 @@ import os
 from datetime import datetime
 import argparse
 import math
+import time
 import pandas as pd
 
 # From Functions Directory
-from Helper_Functions.test_classifier import *
-from Helper_Functions.test_encoder_decoder import *
-from Helper_Functions.train_classifier import *
-from Helper_Functions.train_encoder_decoder import *
+from Helper_Functions.helper_train_classifier import *
 
 # FUNCTIONS:
 #---------------------------------------------------------------------
@@ -40,7 +38,7 @@ def main():
     parser.add_argument('--epoch'     , type = int  , default = 10                                   , help = 'Select Epoch Size (e.g 25)')
     parser.add_argument('--batch'     , type = int  , default = 64                                   , help = 'Select Batch Size (e.g 64)')
     parser.add_argument('--worker'    , type = int  , default = 4                                    , help = 'Select Number of Workers (e.g 4)')
-    parser.add_argument('--imgsz'     , type = int  , default = (80,40)                              , help = 'Select Input Image Size (e.g 80,40)')
+    parser.add_argument('--imgsz'     , type = int  , default = (64,64)                              , help = 'Select Input Image Size (e.g 80,40)')
     args = parser.parse_args()
 
     print(">>>>> train_classifier \n")
@@ -74,7 +72,7 @@ def main():
     df_train_classifier = pd.read_csv(args.csv, index_col = 0)
     df_train_classifier = df_train_classifier.reset_index()
     number_classes = 9
-    train_classifier(args, file, run_path, number_classes, df_train_classifier)
+    helper_train_classifier(args, file, run_path, number_classes, df_train_classifier)
 
     endT = time.time()
     program_time_difference = endT - startT

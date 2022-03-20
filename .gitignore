@@ -9,10 +9,8 @@ OUTPUT/test_encoder_decoder/*
 
 # Programs
 
-
 # Files
 *.pth
-*.csv
 *.xlsx
 
 # Byte-compiled / optimized / DLL files
