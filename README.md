@@ -45,17 +45,41 @@ Evaluate encoder-decoder network using ATR dataset
     - 2000m (Day: 2007/Night: 1927)
 
 # Folder Structure
-- Functions
-    - images2csv.py
-        - Description: Convert dataset to csv used during training and testing
-    - test_classifier.py
-        - Description: Main function to evaluate classifer performance
-    - test_encoder_decoder.py
-        - Description: Main function to evaluate encoder decoder performance
-    - train_classifier.py
-        - Description: Main function to train classifier
-    - train_enoder_decoder.py
-        - Description: Main function to train encoder decoder
+- Helper_Functions:
+    - az_dict.txt
+        - Description: dict of azimuth to degrees translations
+    - dataset.py
+        - Description: Class used to organize dataset for models
+    - helper_test_classifier.py
+        - Description: Helper function for test_classifier.py
+    - helper_test_encoder_decoder.py
+        - Description: Helper function for test_encoder_decoder.py
+    - helper_train_classifier.py
+        - Description: Helper function for train_classifier.py
+    - helper_train_encoder_decoder.py
+        - Description: Helper function for train_encoder_decoder.py
+    - models.py
+        - Description: Class to create encoder decoder model
+    - sample_image.py
+        - Description: Test function to sample a few images (TESTING PURPOSES)
+    - test_classifier_images2csv.py
+        - Description: Helper functipm to convert dataset to csv used during classifier testing
+    - test_encoder_decoder_images2csv.py
+        - Description: Helper functipm to convert dataset to csv used during encoder decoder testing
+    - train_classifier_images2csv.py
+        - Description: Helper functipm to convert dataset to csv used during classifier training
+    - train_encoder_decoder_images2csv.py
+        - Description: Helper functipm to convert dataset to csv used during encoder decoder training
+- images2csv.py
+    - Description: Convert dataset to csv used during training and testing
+- test_classifier.py
+    - Description: Main function to evaluate classifer performance
+- test_encoder_decoder.py
+    - Description: Main function to evaluate encoder decoder performance
+- train_classifier.py
+    - Description: Main function to train classifier
+- train_enoder_decoder.py
+    - Description: Main function to train encoder decoder
 - INPUT
     - Dataset
         - Description: This is where you leave you images

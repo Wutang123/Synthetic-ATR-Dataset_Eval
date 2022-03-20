@@ -17,10 +17,10 @@ import argparse
 import math
 
 # From Functions Directory
-from Data_Functions.train_classifier_images2csv import *
-from Data_Functions.test_classifier_images2csv import *
-from Data_Functions.train_encoder_decoder_images2csv import *
-from Data_Functions.test_encoder_decoder_images2csv import *
+from Helper_Functions.train_classifier_images2csv import *
+from Helper_Functions.test_classifier_images2csv import *
+from Helper_Functions.train_encoder_decoder_images2csv import *
+from Helper_Functions.test_encoder_decoder_images2csv import *
 
 startT = time.time()
 parser = argparse.ArgumentParser(description = 'images2csv')
