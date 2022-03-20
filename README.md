@@ -12,10 +12,10 @@ Evaluate encoder-decoder network using ATR dataset
     - py .\test_classifier.py
 
 - Train Encoder Decoder:
-    -
+    - py .\train_encoder_decoder.py
 
 - Test Encoder Decoder:
-    -
+    - py .\train_encoder_decoder.py
 
 ## Task:
 1. Classify ground truth images (Print out classiification)
@@ -46,19 +46,27 @@ Evaluate encoder-decoder network using ATR dataset
 
 # Folder Structure
 - Functions
+    - images2csv.py
+        - Description: Convert dataset to csv used during training and testing
     - test_classifier.py
-        - Description: Function to evaluate classifer performance
+        - Description: Main function to evaluate classifer performance
     - test_encoder_decoder.py
-        - Description: Function to evaluate encoder decoder performance
+        - Description: Main function to evaluate encoder decoder performance
     - train_classifier.py
-        - Description: Function to train classifier
+        - Description: Main function to train classifier
     - train_enoder_decoder.py
-        - Description: Function to train encoder decoder
+        - Description: Main function to train encoder decoder
 - INPUT
-    - Train_Classifier_Dataset
-        - Description: Dataset used to train the classifer.
-    - Train_Encoder_Decoder_Dataset
-        - Description: Dataset used to train encoder decoder
+    - Dataset
+        - Description: This is where you leave you images
+    - Test_Classifier_Dataset.csv
+        - Description: CSV file created to use during classifier testing
+    - Test_Encoder_Decoder_Dataset.csv
+        - Description: CSV file created to use during encoder decoder testing
+    - Train_Classifier_Dataset.csv
+        - Description: CSV file created to use during classifier training
+    - Train_Encoder_Decoder_Dataset.csv
+        - Description: CSV file created to use during encoder decoder training
 - OUTPUT
     - Description: Contains output of each run
 - main.py
@@ -82,7 +90,7 @@ Evaluate encoder-decoder network using ATR dataset
 - Input: ONE 40 by 80 images (.mat file)
 - Ouput: Classification accuracy
 
-## Encoder Decoder Model"
+## Encoder Decoder Model
 - 4 layered CNN model
 - Input: TWO  40 by 80 image (.mat file)
     - First images is the original ground truth (GT)
