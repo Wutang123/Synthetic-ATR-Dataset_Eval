@@ -33,7 +33,7 @@ def main():
     parser.add_argument('--save_fig'      , type = bool , default = True                                                   , help = 'Save Figures')
     parser.add_argument('--save_data'     , type = bool , default = True                                                   , help = 'Save Data to CSV')
     parser.add_argument('--csv'           , type = str  , default = 'Input/Test_Encoder_Decoder_Dataset.csv'               , help = 'Load csv files')
-    parser.add_argument('--vgg_model_path', type = str  , default = 'OUTPUT/train_classifier/Run1/classifier.pth'          , help = 'Load vgg16 model path')
+    parser.add_argument('--vgg_model_path', type = str  , default = 'OUTPUT/train_classifier/Run0/classifier.pth'          , help = 'Load vgg16 model path')
     parser.add_argument('--ec_model_path' , type = str  , default = 'OUTPUT/train_encoder_decoder/Run0/encoder_decoder.pth', help = 'Load encoder-decoder model path')
     parser.add_argument('--batch'         , type = int  , default = 64                                                     , help = 'Select Batch Size (e.g 64)')
     parser.add_argument('--worker'        , type = int  , default = 1                                                      , help = 'Select Number of Workers (e.g 4)')

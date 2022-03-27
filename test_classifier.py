@@ -33,7 +33,7 @@ def main():
     parser.add_argument('--save_fig'  , type = bool , default = True                                         , help = 'Save Figures')
     parser.add_argument('--save_data' , type = bool , default = True                                         , help = 'Save Data to CSV')
     parser.add_argument('--csv'       , type = str  , default = 'Input/Test_Classifier_Dataset.csv'          , help = 'Load csv files')
-    parser.add_argument('--model_path', type = str  , default = 'OUTPUT/train_classifier/Run1/classifier.pth', help = 'Load model path')
+    parser.add_argument('--model_path', type = str  , default = 'OUTPUT/train_classifier/Run0/classifier.pth', help = 'Load model path')
     parser.add_argument('--batch'     , type = int  , default = 64                                           , help = 'Select Batch Size (e.g 64)')
     parser.add_argument('--worker'    , type = int  , default = 4                                            , help = 'Select Number of Workers (e.g 4)')
     parser.add_argument('--imgsz'     , type = int  , default = (64,64)                                      , help = 'Select Input Image Size (e.g 80,40)')

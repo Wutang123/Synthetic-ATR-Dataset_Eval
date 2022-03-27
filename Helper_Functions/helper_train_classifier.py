@@ -190,7 +190,7 @@ def helper_train_classifier(args, file, run_path, number_classes, df_train_class
     # Update number of output classes from 1000 to 9
     num_ftrs = model.classifier[6].in_features
     model.fc = nn.Linear(num_ftrs, num_classes)
-
+    # model.classifier[6] = nn.Linear(num_ftrs, num_classes + 6) # Classes: 1, 2, 5, 6, 9, 11, 12, 13, 14 [Total: 15]
     model = model.to(device) # Add device to model
 
     # Dataset
@@ -213,7 +213,7 @@ def helper_train_classifier(args, file, run_path, number_classes, df_train_class
         if(first_train):
             train_size = images.shape
             first_train = 0
-            print(images.shape, images.dtype, images.device)
+            # print(images.shape, images.dtype, images.device)
             # print(labels.shape, print(labels.dtype, print(labels.device)
         else:
             if(images.shape != train_size):

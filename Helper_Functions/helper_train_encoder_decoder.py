@@ -134,7 +134,7 @@ def train(epoch, epoch_num, flip_channel, run_path, file, train_loader, param_tr
         # break
 
     train_loss /= num_batches
-    print(f"Avg loss: {train_loss:>8f}]")
+    print(f"Avg loss: {train_loss:>8f}")
     file.write("Training Error: [Avg Loss: {:>8f}]\n".format(train_loss))
 
     return train_loss

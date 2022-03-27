@@ -108,6 +108,7 @@ def helper_test_classifier(args, file, run_path, number_classes, test_csv_file, 
     # Update number of output classes from 1000 to 9
     num_ftrs = model.classifier[6].in_features
     model.fc = nn.Linear(num_ftrs, num_classes)
+    # model.classifier[6] = nn.Linear(num_ftrs, num_classes + 6) # Classes: 1, 2, 5, 6, 9, 11, 12, 13, 14 [Total: 15]
 
     # Load Trained Model
     model.load_state_dict(torch.load(model_path))
