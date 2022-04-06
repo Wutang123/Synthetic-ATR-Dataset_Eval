@@ -30,14 +30,15 @@ from Helper_Functions.helper_test_encoder_decoder import *
 def main():
     startT = time.time()
     parser = argparse.ArgumentParser(description = 'test_encoder_decoder')
-    parser.add_argument('--save_fig'      , type = bool , default = True                                                   , help = 'Save Figures')
-    parser.add_argument('--save_data'     , type = bool , default = True                                                   , help = 'Save Data to CSV')
-    parser.add_argument('--csv'           , type = str  , default = 'Input/Test_Encoder_Decoder_Dataset.csv'               , help = 'Load csv files')
-    parser.add_argument('--vgg_model_path', type = str  , default = 'OUTPUT/train_classifier/Run0/classifier.pth'          , help = 'Load vgg16 model path')
-    parser.add_argument('--ec_model_path' , type = str  , default = 'OUTPUT/train_encoder_decoder/Run0/encoder_decoder.pth', help = 'Load encoder-decoder model path')
-    parser.add_argument('--batch'         , type = int  , default = 64                                                     , help = 'Select Batch Size (e.g 64)')
-    parser.add_argument('--worker'        , type = int  , default = 1                                                      , help = 'Select Number of Workers (e.g 4)')
-    parser.add_argument('--imgsz'         , type = int  , default = (64,64)                                                , help = 'Select Input Image Size (e.g 80,40)')
+    parser.add_argument('--save_fig'                 , type = bool , default = True                                                              , help = 'Save Figures')
+    parser.add_argument('--save_data'                , type = bool , default = True                                                              , help = 'Save Data to CSV')
+    parser.add_argument('--csv'                      , type = str  , default = 'Input/Test_Encoder_Decoder_Dataset.csv'                          , help = 'Load csv files')
+    parser.add_argument('--vgg_model_path'           , type = str  , default = 'OUTPUT/train_classifier/Run0/classifier.pth'                     , help = 'Load vgg16 model path')
+    parser.add_argument('--ec_params_model_path'     , type = str  , default = 'OUTPUT/train_encoder_decoder/Run0/params_encoder_decoder.pth'    , help = 'Load encoder-decoder model path (synthetic image)')
+    parser.add_argument('--ec_zeroparams_model_path' , type = str  , default = 'OUTPUT/train_encoder_decoder/Run2/zeroparams_encoder_decoder.pth', help = 'Load encoder-decoder model path (ground truth image)')
+    parser.add_argument('--batch'                    , type = int  , default = 64                                                                , help = 'Select Batch Size (e.g 64)')
+    parser.add_argument('--worker'                   , type = int  , default = 1                                                                 , help = 'Select Number of Workers (e.g 4)')
+    parser.add_argument('--imgsz'                    , type = int  , default = (64,64)                                                           , help = 'Select Input Image Size (e.g 80,40)')
     args = parser.parse_args()
 
     print(">>>>> test_encoder_decoder \n")
@@ -71,7 +72,7 @@ def main():
     df_test_encoder_decoder = pd.read_csv(args.csv, index_col = 0)
     df_test_encoder_decoder = df_test_encoder_decoder.reset_index()
     number_classes = 9
-    helper_test_encoder_decoder(args, file, run_path, number_classes, args.csv, args.vgg_model_path, args.ec_model_path, df_test_encoder_decoder)
+    helper_test_encoder_decoder(args, file, run_path, number_classes, args.csv, args.vgg_model_path, args.ec_params_model_path, args.ec_zeroparams_model_path, df_test_encoder_decoder)
 
     endT = time.time()
     program_time_difference = endT - startT

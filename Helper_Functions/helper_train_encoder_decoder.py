@@ -34,16 +34,14 @@ from torch.utils.data import DataLoader
 # Function:    train()
 # Description: Train model
 #---------------------------------------------------------------------
-def train(epoch, epoch_num, flip_channel, run_path, file, train_loader, param_train_loader, zero_param_train_loader, model, loss_function, optimizer, device):
+def train(epoch, use_params, save_fig, flip_channel, run_images_path, file, train_loader, param_train_loader, model, loss_function, optimizer, device):
+
     model.train()
 
     size        = len(train_loader.dataset)
     num_batches = len(train_loader)
-
-    params_iter      = iter(param_train_loader)
-    zero_params_iter = iter(zero_param_train_loader)
-
-    train_loss = 0
+    params_iter = iter(param_train_loader)
+    train_loss  = 0
 
     for batch, (images, labels) in enumerate(train_loader):
         images_1 = images[0]
@@ -51,67 +49,66 @@ def train(epoch, epoch_num, flip_channel, run_path, file, train_loader, param_tr
         labels_1 = labels[0]
         labels_2 = labels[1]
 
-        params_next       = next(params_iter)
-        zero_params_next  = next(zero_params_iter)
+        params_next = next(params_iter)
 
         images_1    = images_1.to(device)
         images_2    = images_2.to(device)
         labels_1    = labels_1.to(device)
         labels_2    = labels_2.to(device)
         params      = params_next.to(device)
-        zero_params = zero_params_next.to(device)
 
         # Forward pass: compute predicted outputs by passing inputs to the model
-        pred = model(images_1, params, zero_params)
+        if(use_params):
+            pred = model(images_1, params) # Create Synthic view of image 1 with params (aka new image 2)
+        else:
+            pred = model(images_2, params) # Create synthic view of image 2 with zero params (aka ground truth)
 
         # Sample image
-        if batch == 0 and epoch == (epoch_num - 1):
+        if batch % 21 == 0 and epoch % 25 == 0: # Sample images every 21 batches and 25 epochs
 
-            fig = plt.figure(figsize=(10, 7))
+            fig = plt.figure(figsize=(10, 10))
             fig.add_subplot(1, 3, 1)
             plt.title("images_1[0]")
+
+            a = images_1[0] * 65535                 # De-normalize
+            a = a.reshape((flip_channel))           # Reshape (3, 64, 64) -> (64, 64, 3)
+            a = a.detach().to("cpu").numpy()        # Covert to "CPU" and numpy array
+            a = cv2.cvtColor(a, cv2.COLOR_BGR2GRAY) # Remove 3 channels
+            plt.imshow(a, cmap = 'gray')            # Display on color map
             # print(images_1[0], type(images_1[0]), images_1[0].size())
-            # a = images_1[0].squeeze()
-            # print(a.size())
-            # a = a.detach().to("cpu").numpy()
-            a = images_1[0]
-            a = a.reshape((flip_channel))
-            a = a.detach().to("cpu").numpy()
             # print(type(a))
             # print(a.shape)
-            plt.imshow(a, cmap = 'gray')
             # print()
 
             fig.add_subplot(1, 3, 2)
             plt.title("images_2[0]")
-            # print(images_2[0], type(images_2[0]), images_2[0].size())
-            # b = images_2[0].squeeze()
-            # print(b.size())
-            # b = b.detach().to("cpu").numpy()
-            b = images_2[0]
+            b = images_2[0] * 65535
             b = b.reshape((flip_channel))
             b = b.detach().to("cpu").numpy()
+            b = cv2.cvtColor(b, cv2.COLOR_BGR2GRAY)
+            plt.imshow(b, cmap = 'gray')
+            # print(images_2[0], type(images_2[0]), images_2[0].size())
             # print(type(b))
             # print(b.shape)
-            plt.imshow(b, cmap = 'gray')
             # print()
 
             fig.add_subplot(1, 3, 3)
             plt.title("pred[0]")
-            # print(pred[0], type(pred[0]), pred[0].size())
-            # c = pred[0].squeeze()
-            # print(c.size())
-            # c = c.detach().to("cpu").numpy()
-            c = pred[0]
+            c = pred[0] * 65535
             c = c.reshape((flip_channel))
             c = c.detach().to("cpu").numpy()
+            c = cv2.cvtColor(c, cv2.COLOR_BGR2GRAY)
+            plt.imshow(c, cmap = 'gray')
+            # print(pred[0], type(pred[0]), pred[0].size())
             # print(type(c))
             # print(c.shape)
-            plt.imshow(c, cmap = 'gray')
             # print()
 
-            save_path = os.path.join(run_path, (str(epoch) + "_images_1[0]_images_2[0]_pred[0].png"))
-            plt.savefig(save_path, bbox_inches = 'tight')
+            if(save_fig):
+                save_path = os.path.join(run_images_path, (str(epoch) + "_" + str(batch) + "_run_images.png"))
+                plt.savefig(save_path, bbox_inches = 'tight')
+                fig.clf()
+                plt.close(fig)
 
         # Calculate the loss
         loss = loss_function(pred, images_2)
@@ -127,8 +124,8 @@ def train(epoch, epoch_num, flip_channel, run_path, file, train_loader, param_tr
 
         train_loss += loss.item() * images_1.size(0)
 
-        if batch % 100 == 0:
-            loss, current = loss.item(), batch * len(images)
+        # if batch % 100 == 0:
+        #     loss, current = loss.item(), batch * len(images)
         #     print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
         # break
@@ -190,15 +187,19 @@ def plotFigures(save_fig, run_path, total_train_loss):
 #---------------------------------------------------------------------
 def helper_train_encoder_decoder(args, file, run_path, number_classes, df_train_encoder_decoder):
 
+    run_images_path = os.path.join(run_path, "run_images")
+    os.mkdir(run_images_path)
+
     learning_rate = args.lr
     batch         = args.batch
     num_worker    = args.worker
     epoch_num     = args.epoch
-    input_size    = args.imgsz # Minimum for VGG16 is (32,32)
+    input_size    = args.imgsz
     num_classes   = number_classes
     save_model    = args.save_model
     save_fig      = args.save_fig
     save_data     = args.save_data
+    use_params    = args.params
 
     print("Learning Rate:      {}".format(learning_rate))
     file.write("Learing Rate:       {} \n".format(learning_rate))
@@ -221,7 +222,7 @@ def helper_train_encoder_decoder(args, file, run_path, number_classes, df_train_
     model = model.to(device) # Add device to model
 
     # Dataset
-    # Oraganize input encoder-decoder parameters
+    # Organize input encoder-decoder parameters
     image_1_parameters = df_train_encoder_decoder.drop(columns = ['image_1', 'class_id_1', 'class_type_1', 'image_2', 'class_id_2', 'class_type_2', 'time_of_day_2','range_2', 'orientation_2'])
     image_1_parameters['time_of_day_1'].replace(to_replace = 'Day', value = 1, inplace = True)
     image_1_parameters['time_of_day_1'].replace(to_replace = 'Night', value = 0, inplace = True)
@@ -244,41 +245,34 @@ def helper_train_encoder_decoder(args, file, run_path, number_classes, df_train_
 
     rad_factor = 100.0
     param      = []
-    zero_param = []
     for i in range(len(image_2_parameters)):
         param_range   = float(image_2_parameters[i][1])
         param_az      = float(az_dict.get(image_2_parameters[i][2]))
         param_daytime = float(image_2_parameters[i][0])
 
-        param.append([param_range / rad_factor,
-                      math.sin(math.radians(param_daytime)),
-                      math.cos(math.radians(param_daytime)),
-                      math.sin(math.radians(param_az)),
-                      math.cos(math.radians(param_az))])
+        if(use_params):
+            param.append([param_range / rad_factor,
+                        math.sin(math.radians(param_daytime)),
+                        math.cos(math.radians(param_daytime)),
+                        math.sin(math.radians(param_az)),
+                        math.cos(math.radians(param_az))])
+        else: # Zero parameters
+            param.append([0, 0, 0, 0, 0])
 
-        zero_param.append([0,
-                           math.sin(math.radians(0)),
-                           math.cos(math.radians(0)),
-                           math.sin(math.radians(0)),
-                           math.cos(math.radians(0))])
-
-    param      = torch.FloatTensor(param)
-    zero_param = torch.FloatTensor(zero_param)
+    param  = torch.FloatTensor(param)
     # print(param)
-    # print(zero_param)
 
     # print(df_train_encoder_decoder.info())
     channel = list(input_size)
-    channel.insert(0, 3)
+    channel.insert(0, 3)      # (3, 64, 64)
     channel = tuple(channel)
     flip_channel = list(input_size)
-    flip_channel.insert(2, 3)
+    flip_channel.insert(2, 3) # (64, 64, 3)
     flip_channel = tuple(flip_channel)
 
     training_set            = Encoder_Decoder_Dataset(df_train_encoder_decoder, input_size, channel)
     train_loader            = DataLoader(training_set, batch_size = batch, shuffle = False, num_workers = num_worker, drop_last = False)
     param_train_loader      = DataLoader(param, batch_size = batch, shuffle = False, num_workers = num_worker, drop_last = False)
-    zero_param_train_loader = DataLoader(zero_param, batch_size = batch, shuffle = False, num_workers = num_worker, drop_last = False)
 
     # Loss and Optimizer Function
     loss_function = nn.MSELoss().to(device)
@@ -335,7 +329,7 @@ def helper_train_encoder_decoder(args, file, run_path, number_classes, df_train_
         print("EPOCH {}:".format(epoch))
         file.write("EPOCH: " + str(epoch) + "\n")
 
-        train_loss = train(epoch, epoch_num, flip_channel, run_path, file, train_loader, param_train_loader, zero_param_train_loader, model, loss_function, optimizer, device)
+        train_loss = train(epoch, use_params, save_fig, flip_channel, run_images_path, file, train_loader, param_train_loader, model, loss_function, optimizer, device)
         total_train_loss.append(train_loss) # Average Training Loss
 
         end_time = time.time()
@@ -347,7 +341,11 @@ def helper_train_encoder_decoder(args, file, run_path, number_classes, df_train_
 
     # Save Model
     if(save_model):
-        save_path = os.path.join(run_path, "encoder_decoder.pth")
+        if(use_params):
+            file_name_param = "params"
+        else:
+            file_name_param = "zeroparams"
+        save_path = os.path.join(run_path, file_name_param + "_encoder_decoder.pth")
         torch.save(model.state_dict(), save_path)
 
      # Organize Results

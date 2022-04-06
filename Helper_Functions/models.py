@@ -61,11 +61,10 @@ class model_encoder_decoder(nn.Module):
         # self.final     = nn.ConvTranspose2d(in_channels = 32, out_channels =  3, kernel_size = (3, 3))
         self.final     = nn.Conv2d(in_channels = 32, out_channels = 3, kernel_size = (3, 3), padding = 'same')
 
-    def forward(self, input, param, zero_params):
+    def forward(self, input, param):
         batch = input.size()[0]
         # print("input", input.size())
         # print("param", param.size(), "\n")
-        # print("zero_params", zero_params.size(), "\n")
 
         # Encoding
         encoded_view = F.leaky_relu(self.enc_conv1(input))
