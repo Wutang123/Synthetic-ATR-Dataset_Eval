@@ -24,7 +24,7 @@ import csv
 def test_encoder_decoder_images2csv(input_path, dir_path):
 
     csv_path = os.path.join(input_path, "Test_Encoder_Decoder_Dataset.csv")
-    print("Ouput CSV Path:     ", csv_path)
+    print("Output CSV Path:     ", csv_path)
 
     header = ['image_1', 'class_id_1', 'class_type_1', 'time_of_day_1', 'range_1', 'orientation_1',
                 'image_2', 'class_id_2', 'class_type_2', 'time_of_day_2', 'range_2', 'orientation_2']
@@ -75,10 +75,10 @@ def test_encoder_decoder_images2csv(input_path, dir_path):
                                             data.append(1000)                          # Data[4]
                                         elif substring_1[0] == 'cegr01927':
                                             data.append("Night")
-                                            data.append(1000)
+                                            data.append(2000)
                                         elif substring_1[0] == 'cegr02003':
                                             data.append("Day")
-                                            data.append(2000)
+                                            data.append(1000)
                                         elif substring_1[0] == 'cegr02007':
                                             data.append("Day")
                                             data.append(2000)
@@ -93,10 +93,10 @@ def test_encoder_decoder_images2csv(input_path, dir_path):
                                             data.append(1000)                          # Data[10]
                                         elif substring_2[0] == 'cegr01927':
                                             data.append("Night")
-                                            data.append(1000)
+                                            data.append(2000)
                                         elif substring_2[0] == 'cegr02003':
                                             data.append("Day")
-                                            data.append(2000)
+                                            data.append(1000)
                                         elif substring_2[0] == 'cegr02007':
                                             data.append("Day")
                                             data.append(2000)

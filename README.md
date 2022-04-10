@@ -12,7 +12,8 @@ Evaluate encoder-decoder network using ATR dataset
     - py .\test_classifier.py
 
 - Train Encoder Decoder:
-    - py .\train_encoder_decoder.py
+    - py .\train_encoder_decoder.py --params true --epoch 100  # params
+    - py .\train_encoder_decoder.py --params false --epoch 200 # zero params
 
 - Test Encoder Decoder:
     - py .\train_encoder_decoder.py

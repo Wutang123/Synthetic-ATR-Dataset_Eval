@@ -24,7 +24,7 @@ import csv
 def train_classifier_images2csv(input_path, dir_path):
 
     csv_path = os.path.join(input_path, "Train_Classifier_Dataset.csv")
-    print("Ouput CSV Path:     ", csv_path)
+    print("Output CSV Path:     ", csv_path)
 
     header = ['image', 'class_id', 'class_type', 'time_of_day', 'range', 'orientation']
     data = []
@@ -55,10 +55,10 @@ def train_classifier_images2csv(input_path, dir_path):
                             data.append(1000)                        # Data[4]
                         elif substring[0] == 'cegr01927':
                             data.append("Night")
-                            data.append(1000)
+                            data.append(2000)
                         elif substring[0] == 'cegr02003':
                             data.append("Day")
-                            data.append(2000)
+                            data.append(1000)
                         elif substring[0] == 'cegr02007':
                             data.append("Day")
                             data.append(2000)

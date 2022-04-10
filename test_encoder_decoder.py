@@ -35,7 +35,7 @@ def main():
     parser.add_argument('--csv'                      , type = str  , default = 'Input/Test_Encoder_Decoder_Dataset.csv'                          , help = 'Load csv files')
     parser.add_argument('--vgg_model_path'           , type = str  , default = 'OUTPUT/train_classifier/Run0/classifier.pth'                     , help = 'Load vgg16 model path')
     parser.add_argument('--ec_params_model_path'     , type = str  , default = 'OUTPUT/train_encoder_decoder/Run0/params_encoder_decoder.pth'    , help = 'Load encoder-decoder model path (synthetic image)')
-    parser.add_argument('--ec_zeroparams_model_path' , type = str  , default = 'OUTPUT/train_encoder_decoder/Run2/zeroparams_encoder_decoder.pth', help = 'Load encoder-decoder model path (ground truth image)')
+    parser.add_argument('--ec_zeroparams_model_path' , type = str  , default = 'OUTPUT/train_encoder_decoder/Run1/zeroparams_encoder_decoder.pth', help = 'Load encoder-decoder model path (ground truth image)')
     parser.add_argument('--batch'                    , type = int  , default = 64                                                                , help = 'Select Batch Size (e.g 64)')
     parser.add_argument('--worker'                   , type = int  , default = 1                                                                 , help = 'Select Number of Workers (e.g 4)')
     parser.add_argument('--imgsz'                    , type = int  , default = (64,64)                                                           , help = 'Select Input Image Size (e.g 80,40)')

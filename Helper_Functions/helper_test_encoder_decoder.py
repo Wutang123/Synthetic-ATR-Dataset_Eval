@@ -77,24 +77,13 @@ def plot_confusion_matrix(file, target_names, save_fig, run_path, y_label, y_pre
 # Function:    visual_tsne()
 # Description: Visualize TSNE
 #---------------------------------------------------------------------
-def visual_tsne(file, save_data, save_fig, run_path, run_image_path, features, preds, labels, class_id_dict, name):
-
-    # Color for each class (used in scatter plot)
-    colors_dict = {1 : 'tab:blue'  ,
-                   2 : 'tab:orange',
-                   5 : 'tab:green' ,
-                   6 : 'tab:red'   ,
-                   9 : 'tab:purple',
-                   11: 'tab:brown' ,
-                   12: 'tab:gray'  ,
-                   13: 'tab:pink'  ,
-                   14: 'tab:cyan'  }
+def visual_tsne(file, save_data, save_fig, run_path, run_image_path, features, preds, labels, class_id_dict, name, colors_dict):
 
     # Constants
     N       = 2
-    PERP    = [3000.0]
+    PERP    = [500.0]
     LR      = 'auto'
-    ITER    = [5000]
+    ITER    = [1000]
     VERBOSE = 1
     STATE   = 0
 
@@ -105,7 +94,8 @@ def visual_tsne(file, save_data, save_fig, run_path, run_image_path, features, p
             tsne = TSNE(n_components = N, perplexity = i,  learning_rate = LR, n_iter = j,  verbose = VERBOSE, random_state = STATE).fit_transform(features)
 
             # print("tsne:", tsne)
-            # print("tsne.shape:", tsne.shape)
+            print("tsne.shape: ", tsne.shape, "\n")
+            file.write("tsne.shape: {} \n".format(tsne.shape))
 
             if(save_data):
                 tsne_data = pd.DataFrame(tsne)
@@ -165,7 +155,107 @@ def visual_tsne(file, save_data, save_fig, run_path, run_image_path, features, p
 
         file.write("\n")
 
+    return tsne_data
 
+
+
+#---------------------------------------------------------------------
+# Function:    plot_tsne()
+# Description: Plot addition t-SNE plots
+#---------------------------------------------------------------------
+def plot_tsne(run_images_path, save_fig, tsne_old, tsne_new, class_id_dict, num_classes):
+
+    print("Plotting addition t-SNE plots...")
+
+    # Overlay Plots - All Class
+    fig_0 = plt.figure(num = 0, figsize = (10, 10))
+    plt.title('Overlay_All_TSNE_Labeled')
+    plt.xlabel('t-SNE-1')
+    plt.ylabel('t-SNE-2')
+    sns.scatterplot(data = tsne_old, x = "x_coord", y = "y_coord", hue = "labels", s = 2, palette = sns.color_palette(n_colors = num_classes))
+    sns.scatterplot(data = tsne_new, x = "x_coord", y = "y_coord", hue = "labels", s = 2, palette = sns.color_palette("husl", n_colors = num_classes))
+    plt.legend(labels = ["1_tsne_old", "2_tsne_old", "5_tsne_old",
+                         "6_tsne_old", "9_tsne_old", "11_tsne_old",
+                         "12_tsne_old", "13_tsne_old", "14_tsne_old",
+                         "1_tsne_new", "2_tsne_new", "5_tsne_new",
+                         "6_tsne_new", "9_tsne_new", "11_tsne_new",
+                         "12_tsne_new", "13_tsne_new", "14_tsne_new"],
+               loc='best')
+
+    # Side-by-side Plots - All Class
+    fig_1 = plt.figure(num = 1, figsize=(10, 10))
+    plt.subplot(1, 2, 1)
+    plt.title('SideBySide_All_tsne_old_Labeled')
+    plt.xlabel('t-SNE-1')
+    plt.ylabel('t-SNE-2')
+    plt.legend(labels = ["1_tsne_old", "2_tsne_old", "5_tsne_old",
+                         "6_tsne_old", "9_tsne_old", "11_tsne_old",
+                         "12_tsne_old", "13_tsne_old", "14_tsne_old",],
+               loc='best')
+    sns.scatterplot(data = tsne_old, x = "x_coord", y = "y_coord", hue = "labels", s = 2, palette = sns.color_palette(n_colors = num_classes))
+    plt.subplot(1, 2, 2)
+    plt.title('SideBySide_All_tsne_new_Labeled')
+    plt.xlabel('t-SNE-1')
+    plt.ylabel('t-SNE-2')
+    plt.legend(labels = ["1_tsne_new", "2_tsne_new", "5_tsne_new",
+                         "6_tsne_new", "9_tsne_new", "11_tsne_new",
+                         "12_tsne_new", "13_tsne_new", "14_tsne_new"],
+               loc='best')
+    sns.scatterplot(data = tsne_new, x = "x_coord", y = "y_coord", hue = "labels", s = 2, palette = sns.color_palette("husl", n_colors = num_classes))
+
+    if(save_fig):
+        save_path_0 = os.path.join(run_images_path, "Overlay_All_TSNE_Labeled.png")
+        save_path_1 = os.path.join(run_images_path, "SideBySide_All_TSNE_Labeled.png")
+        fig_0.savefig(save_path_0, bbox_inches = 'tight')
+        fig_1.savefig(save_path_1, bbox_inches = 'tight')
+
+    fig_0.clf()
+    fig_1.clf()
+
+    for key, value in class_id_dict.items():
+
+        tsne_old_contain_values = (tsne_old['labels'] == key)
+        tsne_new_contain_values = (tsne_new['labels'] == key)
+
+        # Overlay Plots - Each Class
+        fig_2 = plt.figure(num = 2, figsize=(10, 10))
+        plt.title("Overlay_" + str(value) + "_TSNE_Labeled")
+        plt.xlabel('t-SNE-1')
+        plt.ylabel('t-SNE-2')
+        plt.scatter(tsne_old.loc[tsne_old_contain_values, 'x_coord'], tsne_old.loc[tsne_old_contain_values, 'y_coord'], s = 2, c = 'tab:cyan', label = str(key) + '_tsne_old')
+        plt.scatter(tsne_new.loc[tsne_new_contain_values, 'x_coord'], tsne_new.loc[tsne_new_contain_values, 'y_coord'], s = 2, c = 'tab:pink', label = str(key) + '_tsne_new')
+        plt.legend(loc='best')
+
+        # Side-by-side Plots - Each Class
+        fig_3 = plt.figure(num = 3, figsize=(10, 10))
+        plt.subplot(1, 2, 1)
+        plt.title("SideBySide_" + str(value) + "_tsne_old_Labeled")
+        plt.xlabel('t-SNE-1')
+        plt.ylabel('t-SNE-2')
+        plt.scatter(tsne_old.loc[tsne_old_contain_values, 'x_coord'], tsne_old.loc[tsne_old_contain_values, 'y_coord'], s = 2, c = 'tab:cyan', label = str(key) + '_tsne_old')
+        plt.legend(loc='best')
+        plt.subplot(1, 2, 2)
+        plt.title("SideBySide_" + str(value) + "_tsne_new_Labeled")
+        plt.xlabel('t-SNE-1')
+        plt.ylabel('t-SNE-2')
+        plt.scatter(tsne_new.loc[tsne_new_contain_values, 'x_coord'], tsne_new.loc[tsne_new_contain_values, 'y_coord'], s = 2, c = 'tab:pink', label = str(key) + '_tsne_new')
+        plt.legend(loc='best')
+
+        if(save_fig):
+            save_path_0 = os.path.join(run_images_path, "Overlay_" + str(value) + "_TSNE_Labeled.png")
+            save_path_1 = os.path.join(run_images_path, "SideBySide_" + str(value) + "_TSNE_Labeled.png")
+            fig_2.savefig(save_path_0, bbox_inches = 'tight')
+            fig_3.savefig(save_path_1, bbox_inches = 'tight')
+
+        fig_2.clf()
+        fig_3.clf()
+
+    plt.close(fig_0)
+    plt.close(fig_1)
+    plt.close(fig_2)
+    plt.close(fig_3)
+
+    print("Completed t-SNE plots...\n")
 
 #---------------------------------------------------------------------
 # Function:    test_encoder_decoder()
@@ -207,6 +297,21 @@ def helper_test_encoder_decoder(args, file, run_path, number_classes, test_csv_f
     file.write("class_id_dict: \n")
     file.write(json.dumps(class_id_dict))
     file.write("\n\n")
+
+    # Color for each class (used in scatter plot)
+    colors_dict = {1 : 'tab:blue'  ,
+                   2 : 'tab:orange',
+                   5 : 'tab:green' ,
+                   6 : 'tab:red'   ,
+                   9 : 'tab:purple',
+                   11: 'tab:brown' ,
+                   12: 'tab:gray'  ,
+                   13: 'tab:pink'  ,
+                   14: 'tab:cyan'  }
+    file.write("colors_dict: \n")
+    file.write(json.dumps(colors_dict))
+    file.write("\n\n")
+
 
     # Model - VGG16
     vgg_model = models.vgg16(pretrained = False)
@@ -491,7 +596,9 @@ def helper_test_encoder_decoder(args, file, run_path, number_classes, test_csv_f
     # T-distributed Stochastic Neighbor Embedding
     # visual_tsne(file, save_fig, run_path, run_images_path, original, truth_label, class_id_dict, "Original")
     # visual_tsne(file, save_data, save_fig, run_path, run_images_path, GT_output, GT_pred, GT_label, class_id_dict, "Ground_Truth")
-    visual_tsne(file, save_data, save_fig, run_path, run_images_path, synth_GT_output, synth_GT_pred, synth_GT_label, class_id_dict, "Encoder_Decoder_Old_View")
-    visual_tsne(file, save_data, save_fig, run_path, run_images_path, synth_new_image_output, synth_new_image_pred, synth_new_image_label, class_id_dict, "Encoder_Decoder_New_View")
+    tsne_old = visual_tsne(file, save_data, save_fig, run_path, run_images_path, synth_GT_output, synth_GT_pred, synth_GT_label, class_id_dict, "Encoder_Decoder_Old_View", colors_dict)
+    tsne_new = visual_tsne(file, save_data, save_fig, run_path, run_images_path, synth_new_image_output, synth_new_image_pred, synth_new_image_label, class_id_dict, "Encoder_Decoder_New_View", colors_dict)
+
+    plot_tsne(run_images_path, save_fig, tsne_old, tsne_new, class_id_dict, num_classes)
 
 #=====================================================================

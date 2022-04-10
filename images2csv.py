@@ -6,9 +6,9 @@
 # Professor:     Professor Abhijit Mahalanobis
 # Name:          Justin Wu
 # Project:       ATR Dataset Evaluator
-# Function:      train_classifier.py
+# Function:      images2csv.py
 # Create:        02/25/22
-# Description:   Main train classifier function to call helper functions
+# Description:   Main function to create csv files
 #---------------------------------------------------------------------
 
 # IMPORTS:
@@ -27,7 +27,7 @@ parser = argparse.ArgumentParser(description = 'images2csv')
 parser.add_argument('--train_classifier'       , type = bool , default = False, help = 'Create CSV file for training classifier (True or False)')
 parser.add_argument('--test_classifier'        , type = bool , default = False, help = 'Create CSV file for testing classifier (True or False)')
 parser.add_argument('--train_encoder_decoder'  , type = bool , default = False, help = 'Create CSV file for training encoder_decoder (True or False)')
-parser.add_argument('--test_encoder_decoder'   , type = bool , default = False, help = 'Create CSV file for testing encoder_decoder (True or False)')
+parser.add_argument('--test_encoder_decoder'   , type = bool , default = True, help = 'Create CSV file for testing encoder_decoder (True or False)')
 args = parser.parse_args()
 
 print(">>>>> images2csv \n")
@@ -49,7 +49,7 @@ if(args.train_encoder_decoder):
     print()
 
 if(args.test_encoder_decoder):
-    train_encoder_decoder_images2csv(input_path, dir_path)
+    test_encoder_decoder_images2csv(input_path, dir_path)
     print()
 
 endT = time.time()
