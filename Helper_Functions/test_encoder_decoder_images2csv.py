@@ -6,7 +6,7 @@
 # Professor:     Professor Abhijit Mahalanobis
 # Name:          Justin Wu
 # Project:       ATR Dataset Evaluator
-# Function:      train_encoder_decoder_images2csv.py
+# Function:      test_encoder_decoder_images2csv.py
 # Create:        02/25/22
 # Description:   Read directory of images and convert to csv format
 #                Used for testing encoder decoder

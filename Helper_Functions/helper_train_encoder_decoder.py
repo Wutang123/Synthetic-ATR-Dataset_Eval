@@ -6,7 +6,7 @@
 # Professor:     Professor Abhijit Mahalanobis
 # Name:          Justin Wu
 # Project:       ATR Dataset Evaluator
-# Function:      train_encoder_decoder.py
+# Function:      helper_train_encoder_decoder.py
 # Create:        01/17/22
 # Description:   Train Encoder Decoder
 #---------------------------------------------------------------------
