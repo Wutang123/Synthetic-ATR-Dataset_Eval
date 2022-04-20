@@ -1,3 +1,31 @@
+#Folders
+Archive/*
+
+Maliha_Code/
+
+INPUT/Dataset/cegr1923/*
+INPUT/Dataset/cegr1927/*
+INPUT/Dataset/cegr2003/*
+INPUT/Dataset/cegr2007/*
+
+OUTPUT/train_classifier/Run*
+OUTPUT/train_classifier/Archive
+
+OUTPUT/test_classifier/Run*
+OUTPUT/test_classifier/Archive
+
+OUTPUT/train_encoder_decoder/Run*
+OUTPUT/train_encoder_decoder/Archive
+
+OUTPUT/test_encoder_decoder/Run*
+OUTPUT/test_encoder_decoder/Archive
+
+# Programs
+
+# Files
+*.pth
+*.xlsx
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
