@@ -180,6 +180,9 @@ def plotFigures(save_fig, run_path, total_train_loss):
     if (save_fig):
         save_path = os.path.join(run_path, "Training_Loss.png")
         fig.savefig(save_path, bbox_inches = 'tight')
+        fig.clf()
+        plt.close(fig)
+
 
 #---------------------------------------------------------------------
 # Function:    train_encoder_decoder()

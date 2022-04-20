@@ -42,68 +42,61 @@ def main():
                     'INPUT\Dataset\cegr1923\cegr01923_0014_1_D20.mat']
 
 
-    image = scipy.io.loadmat(input_images[0], squeeze_me = True)
-    image = image['target_chip']/65535
-    print(image)
-    print(image.shape)
-    print()
+    # image = scipy.io.loadmat(input_images[0], squeeze_me = True)
+    # image = image['target_chip']/65535
+    # print(image)
+    # print(image.shape)
+    # print()
 
-    image = np.float32(image)
-    image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-    print(image)
-    print(image.shape)
-    print()
+    # image = np.float32(image)
+    # image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+    # print(image)
+    # print(image.shape)
+    # print()
 
-    image = cv2.resize(image, (64, 64))
-    image = torch.from_numpy(image).float()
-    print(image)
-    print(image.shape)
-    print()
+    # image = cv2.resize(image, (64, 64))
+    # image = torch.from_numpy(image).float()
+    # print(image)
+    # print(image.shape)
+    # print()
 
-    image = image.reshape((3, 64, 64))
-    print(image)
-    print(image.shape)
-    print()
+    # image = image.reshape((3, 64, 64))
+    # print(image)
+    # print(image.shape)
+    # print()
 
 
-    # for i in range(len(input_images)):
-    #     mat = scipy.io.loadmat(input_images[i], squeeze_me = True)
-    #     mat = mat['target_chip']
 
-    #     fig = plt.figure(figsize=(10, 7))
-    #     fig.add_subplot(2, 2, 1)
-    #     plt.title("originial")
-    #     plt.imshow(mat, cmap = 'gray')
-    #     print(mat)
-    #     print(mat.shape)
-    #     print()
+    for i in range(len(input_images)):
+        mat = scipy.io.loadmat(input_images[i], squeeze_me = True)
+        mat = mat['target_chip']
 
-    #     fig.add_subplot(2, 2, 2)
-    #     plt.title("normalize")
-    #     mat = mat/65535
-    #     plt.imshow(mat, cmap = 'gray')
-    #     print(mat)
-    #     print(mat.shape)
-    #     print()
+        fig = plt.figure(figsize=(10, 7))
+        fig.add_subplot(2, 2, 1)
+        plt.title("originial")
+        plt.imshow(mat, cmap = 'gray')
+        # print(mat)
+        print(mat.shape)
+        print()
 
-    #     fig.add_subplot(2, 2, 3)
-    #     plt.title("3 dim - 2")
-    #     mat_2 = np.float32(mat)
-    #     mat_2 = cv2.cvtColor(mat_2, cv2.COLOR_GRAY2RGB)
-    #     plt.imshow(mat_2, cmap = 'gray')
-    #     print(mat_2)
-    #     print(mat_2.shape)
-    #     print()
+        fig.add_subplot(2, 2, 2)
+        plt.title("normalize")
+        mat = mat/65535
+        plt.imshow(mat, cmap = 'gray')
+        # print(mat)
+        print(mat.shape)
+        print()
 
-    #     fig.add_subplot(2, 2, 4)
-    #     plt.title("3 dim - 2")
-    #     mat_3 = mat_2.reshape(3, 20, 40)
-    #     plt.imshow(mat_3, cmap = 'gray')
-    #     print(mat_3)
-    #     print(mat_3.shape)
-    #     print()
+        fig.add_subplot(2, 2, 3)
+        plt.title("3 dim - 2")
+        mat_2 = np.float32(mat)
+        mat_2 = cv2.cvtColor(mat_2, cv2.COLOR_GRAY2RGB)
+        plt.imshow(mat_2, cmap = 'gray')
+        # print(mat_2)
+        print(mat_2.shape)
+        print()
+        plt.show()
 
-    #     plt.show()
 
 
     # for i in range(len(input_images)):
